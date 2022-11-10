@@ -1,6 +1,6 @@
 json.id @recipe.id
 json.title @recipe.title
-json.description Description.find(BSON::ObjectId.from_string(@recipe.description_id)).body
+json.description @recipe.description
 json.image @recipe.image
 json.user_id @recipe.user_id
 json.ingredients @recipe.ingredients, :id, :title

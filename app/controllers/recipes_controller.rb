@@ -18,13 +18,8 @@ class RecipesController < ApplicationController
   def create
     begin
       ActiveRecord::Base.transaction do
-        unless params[:description].nil?
-          params.require(:recipe)[:description_id] = Description.create(body: params[:description]).id.to_s
-        else
-          raise ActiveRecord::RecordInvalid
-        end
         @recipe = Recipe.create(recipe_params)
-        params[:ingredients].each {|id| RecipeIngredient.create(recipe_id: @recipe.id, ingredient_id: id)}
+        Ingredient.find(params[:ingredients]).each {|ingredient| @recipe.ingredients << ingredient}
         render json: @recipe, status: :created, location: @recipe
       end
     rescue ActiveRecord::TransactionIsolationError => exception
@@ -36,15 +31,10 @@ class RecipesController < ApplicationController
   def update
     begin
       ActiveRecord::Base.transaction do
-        unless params[:description].nil?
-          description = Description.find(BSON::ObjectId.from_string(@recipe.description_id))
-          description.update(body: params[:description])
-          params.require(:recipe)[:description_id] = description.id.to_s
-        end
         # place which somebody must rewrite because delete then create is a bad practice for update
         unless params[:ingredients].nil?
-          RecipeIngredient.where(recipe_id: @recipe.id).map(&:delete)
-          params[:ingredients].each {|id| RecipeIngredient.create!(recipe_id: @recipe.id, ingredient_id: id)}
+          @recipe.ingredients.clear
+          Ingredient.find(params[:ingredients]).each {|ingredient| @recipe.ingredients << ingredient}
         end
         @recipe.update(recipe_params) unless recipe_params.nil?
         render json: @recipe
@@ -58,8 +48,7 @@ class RecipesController < ApplicationController
   def destroy
     begin
       ActiveRecord::Base.transaction do
-        Description.find(BSON::ObjectId.from_string(@recipe.description_id)).delete
-        RecipeIngredient.where(recipe_id: @recipe.id).map(&:delete)
+        @recipe.ingredients.clear
         @recipe.destroy
       end
     rescue ActiveRecord::TransactionIsolationError => exception
@@ -75,6 +64,6 @@ class RecipesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def recipe_params
-      params.require(:recipe).permit(:title, :description_id, :image, :user_id)
+      params.require(:recipe).permit(:title, :description, :image, :user_id)
     end
 end
