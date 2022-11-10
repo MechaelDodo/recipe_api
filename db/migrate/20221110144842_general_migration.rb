@@ -14,6 +14,5 @@ class GeneralMigration < ActiveRecord::Migration[7.0]
       t.timestamps
     end
     create_join_table :ingredients, :recipes
-
   end
 end
