@@ -1,7 +1,6 @@
 class RecipesController < ApplicationController
-  before_action :set_recipe, only: %i[ show update destroy add_to_cart ]
   before_action :authorize
-  before_action :set_recipe, only: %i[show update destroy]
+  before_action :set_recipe, only: %i[ show update destroy add_to_cart ]
 
   # GET /recipes
   def index
@@ -27,12 +26,22 @@ class RecipesController < ApplicationController
     end
   end
 
+  def add_to_cart
+    @recipe.ingredients.each do |ingredient|
+      CartIngredient.create(cart_id: params[:cart_id],
+                            ingredient_id: ingredient.id, user_id: @user.id)
+    end
+    render json: @recipe, location: @recipe
+  end
+
+
   # PATCH/PUT /recipes/1
   def update
     begin
       ActiveRecord::Base.transaction do
         # place which somebody must rewrite because delete then create is a bad practice for update
         unless params[:ingredients].nil?
+          #@recipe.ingredients.update(params[:ingredients])
           @recipe.ingredients.clear
           Ingredient.find(params[:ingredients]).each {|ingredient| @recipe.ingredients << ingredient}
         end

@@ -1,10 +1,6 @@
 json.id @cart.id
 
-# json.ingredients @cart.ingredients.uniq.each do |ingredient|
-#   json.id ingredient.id
-#   json.title ingredient.title
-#   json.count @cart.ingredients.where(id: ingredient.id).count
-# end
+
 
 json.ingredients CartIngredient.where(cart_id: @cart.id).group_by(&:user_id).each_key do |user_id|
   json.user_id user_id
