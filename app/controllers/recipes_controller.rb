@@ -2,6 +2,7 @@
 
 # RecipesController
 class RecipesController < ApplicationController
+  before_action :authorize
   before_action :set_recipe, only: %i[show update destroy]
 
   # GET /recipes
@@ -15,7 +16,7 @@ class RecipesController < ApplicationController
   # POST /recipes
   def create
     ActiveRecord::Base.transaction do
-      @recipe = Recipe.create(recipe_params)
+      @recipe = Recipe.create(recipe_params.merge(user: @user))
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       render json: @recipe, status: :created, location: @recipe
     end
@@ -57,6 +58,6 @@ class RecipesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def recipe_params
-    params.require(:recipe).permit(:title, :description, :image, :user_id)
+    params.require(:recipe).permit(:title, :description, :image)
   end
 end
