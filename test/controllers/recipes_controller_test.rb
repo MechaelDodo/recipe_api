@@ -15,7 +15,8 @@ class RecipesControllerTest < ActionDispatch::IntegrationTest
   test 'should create recipe' do
     assert_difference('Recipe.count') do
       post recipes_url,
-           params: { recipe: { description_id: @recipe.description_id, image: @recipe.image, title: @recipe.title, user_id: @recipe.user_id } }, as: :json
+           params: { recipe: { description_id: @recipe.description_id, image: @recipe.image,
+                               title: @recipe.title, user_id: @recipe.user_id } }, as: :json
     end
 
     assert_response :created
