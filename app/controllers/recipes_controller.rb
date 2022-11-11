@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RecipesController < ApplicationController
   before_action :set_recipe, only: %i[show update destroy]
 
@@ -7,8 +9,7 @@ class RecipesController < ApplicationController
   end
 
   # GET /recipes/1
-  def show
-  end
+  def show; end
 
   # POST /recipes
   def create
@@ -17,8 +18,8 @@ class RecipesController < ApplicationController
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       render json: @recipe, status: :created, location: @recipe
     end
-  rescue ActiveRecord::TransactionIsolationError => exception
-    render json: exception, status: :unprocessable_entity
+  rescue ActiveRecord::TransactionIsolationError => e
+    render json: e, status: :unprocessable_entity
   end
 
   # PATCH/PUT /recipes/1
@@ -32,8 +33,8 @@ class RecipesController < ApplicationController
       @recipe.update(recipe_params) unless recipe_params.nil?
       render json: @recipe
     end
-  rescue ActiveRecord::TransactionIsolationError => exception
-    render json: exception, status: :unprocessable_entity
+  rescue ActiveRecord::TransactionIsolationError => e
+    render json: e, status: :unprocessable_entity
   end
 
   # DELETE /recipes/1
@@ -42,8 +43,8 @@ class RecipesController < ApplicationController
       @recipe.ingredients.clear
       @recipe.destroy
     end
-  rescue ActiveRecord::TransactionIsolationError => exception
-    render json: exception, status: :unprocessable_entity
+  rescue ActiveRecord::TransactionIsolationError => e
+    render json: e, status: :unprocessable_entity
   end
 
   private
