@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 json.id @recipe.id
 json.title @recipe.title
 json.description @recipe.description

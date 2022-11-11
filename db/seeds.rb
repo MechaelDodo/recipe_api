@@ -1,7 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
+# frozen_string_literal: true
+
+# filling Recipe and Ingredient
+5.times do
+  @recipe = Recipe.create(title: Faker::Food.dish,
+                          description: Faker::Food.description,
+                          image: Faker::LoremFlickr.image,
+                          user_id: 1)
+  @ingredient = Ingredient.create(title: Faker::Food.ingredient)
+end
