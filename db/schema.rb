@@ -10,14 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_10_144842) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_10_191447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "ingredients", force: :cascade do |t|
-    t.string "title", null: false
+  create_table "cart_ingredients", force: :cascade do |t|
+    t.bigint "cart_id"
+    t.bigint "ingredient_id"
+    t.integer "user_id", null: false
+    t.index ["cart_id"], name: "index_cart_ingredients_on_cart_id"
+    t.index ["ingredient_id"], name: "index_cart_ingredients_on_ingredient_id"
+  end
+
+  create_table "carts", force: :cascade do |t|
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "ingredients", force: :cascade do |t|
+    t.string "title", null: false
   end
 
   create_table "ingredients_recipes", id: false, force: :cascade do |t|

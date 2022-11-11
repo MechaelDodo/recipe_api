@@ -1,17 +1,13 @@
 class RecipesController < ApplicationController
-  before_action :set_recipe, only: %i[ show update destroy ]
+  before_action :set_recipe, only: %i[ show update destroy add_to_cart ]
 
   # GET /recipes
   def index
     @recipes = Recipe.all
-
-    #render json: @recipes
   end
 
   # GET /recipes/1
   def show
-    #@recipe = Recipe.find(params[:id])
-    #render json: @recipe
   end
 
   # POST /recipes
@@ -25,6 +21,14 @@ class RecipesController < ApplicationController
     rescue ActiveRecord::TransactionIsolationError => exception
       render json: exception, status: :unprocessable_entity
     end
+  end
+
+  def add_to_cart
+    @recipe.ingredients.each do |ingredient|
+      CartIngredient.create(cart_id: params[:cart_id],  #Cart.find_by(user_id: params[:user_id]).id,
+                            ingredient_id: ingredient.id, user_id: params[:user_id]) #current_user.id)
+    end
+    render json: @recipe, location: @recipe
   end
 
   # PATCH/PUT /recipes/1
