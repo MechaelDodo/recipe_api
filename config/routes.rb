@@ -10,4 +10,7 @@ Rails.application.routes.draw do
 
   resources :users
   post '/login', to: 'users#login'
+  post '/add_friend', to: 'users#add_friend'
+  post '/remove_friend', to: 'users#remove_friend'
+  get '/show_friends', to: 'users#show_friends'
 end
