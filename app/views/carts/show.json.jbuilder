@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-json.id @cart.id
+json.cart_id @cart.id
+json.user_id @cart.user.id
 
+# TODO: json.ingredients CartIngredient.includes(:cart).group_by(&:user_id).each_key do |user_id|
+# TODO: посмотри в users_controller show_friends, там возможно подсказка
 json.ingredients CartIngredient.where(cart_id: @cart.id).group_by(&:user_id).each_key do |user_id|
   json.user_id user_id
   json.ingredients CartIngredient.where(cart_id: @cart.id,
