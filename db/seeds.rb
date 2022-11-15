@@ -4,7 +4,7 @@
 5.times do
   @recipe = Recipe.create(title: Faker::Food.dish,
                           description: Faker::Food.description,
-                          image: Faker::LoremFlickr.image,
+                          # image: Faker::LoremFlickr.image,
                           user_id: 1)
   @ingredient = Ingredient.create(title: Faker::Food.ingredient)
 end

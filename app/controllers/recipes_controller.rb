@@ -45,19 +45,17 @@ class RecipesController < ApplicationController
 
   # PATCH/PUT /recipes/1
   def update
-    if @recipe.user == @user
-      ActiveRecord::Base.transaction do
-        unless params[:ingredients].nil?
-          # TODO: place which somebody must rewrite because delete then create is a bad practice for update
-          # @recipe.ingredients.update(params[:ingredients])
-          @recipe.ingredients.clear
-          Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
-        end
-        @recipe.update(recipe_params) unless recipe_params.nil?
-        render json: @recipe
+    raise unless @recipe.user == @user
+
+    ActiveRecord::Base.transaction do
+      unless params[:ingredients].nil?
+        # TODO: place which somebody must rewrite because delete then create is a bad practice for update
+        # @recipe.ingredients.update(params[:ingredients])
+        @recipe.ingredients.clear
+        Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       end
-    else
-      raise
+      @recipe.update(recipe_params) unless recipe_params.nil?
+      render json: @recipe
     end
   rescue ActiveRecord::TransactionIsolationError => e
     render json: e, status: :unprocessable_entity
@@ -68,13 +66,11 @@ class RecipesController < ApplicationController
 
   # DELETE /recipes/1
   def destroy
-    if @recipe.user == @user
-      ActiveRecord::Base.transaction do
-        @recipe.ingredients.clear
-        @recipe.destroy
-      end
-    else
-      raise
+    raise unless @recipe.user == @user
+
+    ActiveRecord::Base.transaction do
+      @recipe.ingredients.clear
+      @recipe.destroy
     end
   rescue ActiveRecord::TransactionIsolationError => e
     render json: e, status: :unprocessable_entity
