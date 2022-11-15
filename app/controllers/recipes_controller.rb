@@ -6,9 +6,7 @@ class RecipesController < ApplicationController
 
   # GET /recipes
   def index
-    @recipes = Recipe.all
-
-    # render json: @recipes
+    @recipes = params[:search].nil? || params[:search].empty? ? Recipe.all : search_recipes
   end
 
   # GET /recipes/1
@@ -27,7 +25,7 @@ class RecipesController < ApplicationController
 
   def add_to_cart
     if (@user.id == params[:user_id]) ||
-      Friendship.find_by(user: User.find(params[:user_id]), friend_id: @user.id)
+       Friendship.find_by(user: User.find(params[:user_id]), friend_id: @user.id)
       @recipe.ingredients.each do |ingredient|
         CartIngredient.create(cart_id: Cart.find_by(user_id: params[:user_id]).id,
                               ingredient_id: ingredient.id, user_id: @user.id)
@@ -51,9 +49,6 @@ class RecipesController < ApplicationController
           @recipe.ingredients.clear
           Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
         end
-        p "1 HAHAHAHAH"
-        p recipe_params
-        p "2 HAHAHAHAH"
         @recipe.update(recipe_params) unless recipe_params.nil?
         render json: @recipe
       end
@@ -95,4 +90,17 @@ class RecipesController < ApplicationController
   def recipe_params
     params[:recipe].permit(:title, :description, :image)
   end
+
+  def search_recipes
+    search_result = []
+    params[:search].split.each do |search_word|
+      Recipe.joins(:ingredients).references(:ingredients)
+            .where("upper(ingredients.title) LIKE '%#{search_word.upcase}%'
+                    OR upper(recipes.title) LIKE '%#{search_word.upcase}%'").each do |recipe|
+        search_result.push recipe
+      end
+    end
+    search_result.uniq
+  end
+
 end
