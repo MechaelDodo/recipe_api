@@ -5,8 +5,8 @@ class IngredientsController < ApplicationController
   before_action :set_ingredient, only: %i[add_to_cart remove_from_cart]
 
   def index
-    @ingredient = Ingredient.all
-    render json: @ingredient
+    @ingredients = params[:search].nil? || params[:search].empty? ? Ingredient.all : search_ingredients
+    render json: @ingredients
   end
 
   def add_to_cart
@@ -40,5 +40,15 @@ class IngredientsController < ApplicationController
 
   def set_ingredient
     @ingredient = Ingredient.find(params[:id])
+  end
+
+  def search_ingredients
+    search_result = []
+    params[:search].split.each do |search_word|
+      Ingredient.where(['upper(title) LIKE ?', "%#{search_word.upcase}%"]).each do |ingredient|
+        search_result.push ingredient
+      end
+    end
+    search_result.uniq
   end
 end
