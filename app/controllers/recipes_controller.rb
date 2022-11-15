@@ -17,6 +17,10 @@ class RecipesController < ApplicationController
     ActiveRecord::Base.transaction do
       @recipe = Recipe.create(recipe_params.merge(user: @user))
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
+      if @user.first_recipe == false
+        RecipeMailer.with(user: @user, recipe: @recipe).recipe_created.deliver_later
+        @user.first_recipe = true
+      end
       render json: @recipe, status: :created, location: @recipe
     end
   rescue ActiveRecord::TransactionIsolationError => e
