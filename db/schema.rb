@@ -47,6 +47,20 @@ ActiveRecord::Schema[7.0].define(version: 20_221_111_183_727) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
+  create_table "cart_ingredients", force: :cascade do |t|
+    t.bigint "cart_id"
+    t.bigint "ingredient_id"
+    t.integer "user_id", null: false
+    t.index ["cart_id"], name: "index_cart_ingredients_on_cart_id"
+    t.index ["ingredient_id"], name: "index_cart_ingredients_on_ingredient_id"
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
