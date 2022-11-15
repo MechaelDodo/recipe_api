@@ -48,7 +48,7 @@ class RecipesController < ApplicationController
     if @recipe.user == @user
       ActiveRecord::Base.transaction do
         unless params[:ingredients].nil?
-          # TODO place which somebody must rewrite because delete then create is a bad practice for update
+          # TODO: place which somebody must rewrite because delete then create is a bad practice for update
           # @recipe.ingredients.update(params[:ingredients])
           @recipe.ingredients.clear
           Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
@@ -106,5 +106,4 @@ class RecipesController < ApplicationController
     end
     search_result.uniq
   end
-
 end
