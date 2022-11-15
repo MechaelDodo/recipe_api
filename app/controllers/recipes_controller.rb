@@ -18,7 +18,7 @@ class RecipesController < ApplicationController
       @recipe = Recipe.create(recipe_params.merge(user: @user))
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       if @user.first_recipe == false
-        RecipeMailer.with(user: @user, recipe: @recipe).recipe_created.deliver_later
+        CreateFirstNotificationJob.set(wait: 3.minutes).perform_later(user: @user, recipe: @recipe)
         @user.update(first_recipe: true)
       end
       render json: @recipe, status: :created, location: @recipe
