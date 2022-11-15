@@ -2,7 +2,6 @@
 
 # class UsersController
 class UsersController < ApplicationController
-  before_action :authorize, only: %i[add_friend remove_friend index show show_friends]
   def index
     @users = User.all
   end
