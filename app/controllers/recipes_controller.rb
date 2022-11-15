@@ -19,7 +19,7 @@ class RecipesController < ApplicationController
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       if @user.first_recipe == false
         RecipeMailer.with(user: @user, recipe: @recipe).recipe_created.deliver_later
-        @user.first_recipe = true
+        @user.update(first_recipe: true)
       end
       render json: @recipe, status: :created, location: @recipe
     end
