@@ -6,4 +6,6 @@ class User < ApplicationRecord
   has_many :recipes
   has_many :friendships, class_name: 'Friendship', foreign_key: :user_id
   has_many :friendships, class_name: 'Friendship', foreign_key: :friend_id
+
+  validates :email, uniqueness: true
 end
