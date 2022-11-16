@@ -45,18 +45,20 @@ class RecipesController < ApplicationController
            status: :unprocessable_entity
   end
 
-  # PATCH/PUT /recipes/1ar_internal_metadata
+  # PATCH/PUT /recipes/1
   def update
-    raise unless @recipe.user == @user
-
-    ActiveRecord::Base.transaction do
-      unless params[:ingredients].nil?
-        transformation(params[:ingredients]) if params[:ingredients].instance_of?(String)
-        @recipe.ingredients.clear
-        Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
+    if @recipe.user == @user
+      ActiveRecord::Base.transaction do
+        unless params[:ingredients].nil?
+          transformation(params[:ingredients]) if params[:ingredients].instance_of?(String)
+          @recipe.ingredients.clear
+          Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
+        end
+        @recipe.update(recipe_params.merge(updated_at: Time.now)) unless recipe_params.nil?
+        render json: @recipe
       end
-      @recipe.update(recipe_params) unless recipe_params.nil?
-      render json: @recipe
+    else
+      raise
     end
   rescue ActiveRecord::TransactionIsolationError => e
     render json: e, status: :unprocessable_entity
