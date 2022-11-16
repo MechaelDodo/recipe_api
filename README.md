@@ -1,24 +1,27 @@
-# README
+# Recipe API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Requirements
 
-Things you may want to cover:
+Ruby - 3.0.0
 
-* Ruby version
+Rails - 7.0.4
 
-* System dependencies
+Sidekiq - 6.5.5
 
-* Configuration
+## Running
 
-* Database creation
+1. After installing the project itself run `bundle install`;
 
-* Database initialization
+2. To run API locally you should create database(you should have PostgreSQL user `root:root`):
 
-* How to run the test suite
+    Creation of database: `rails db:create`
+   
+   Filling DB with start data: `rails db:seed`
 
-* Services (job queues, cache servers, search engines, etc.)
+3. To check that all is OK you can run `bundle exec rspec`;
 
-* Deployment instructions
+4. To start the application itself run `rails s` in your project console;
 
-* ...
+## Usage
+
+You can use annotation(postman folder with all possible commands) to test this API.
