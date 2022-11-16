@@ -45,7 +45,7 @@ Redis - 5.0.7
 
 4. To start the application itself run `rails s` in your project console;
 
-5. To starting sidekiq run `bundle exec sidekiq -q default` in your project console;
+5. For starting sidekiq you have to run `bundle exec sidekiq -q default` in your project console;
 
 ## Usage
 
