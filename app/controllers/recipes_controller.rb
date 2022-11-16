@@ -15,7 +15,9 @@ class RecipesController < ApplicationController
   # POST /recipes
   def create
     ActiveRecord::Base.transaction do
-      @recipe = Recipe.create(recipe_params.merge(user: @user))
+      @recipe = Recipe.create(recipe_params)
+      transformation(params[:ingredients]) if params[:ingredients].instance_of?(String)
+
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       if @user.first_recipe == false
         CreateFirstNotificationJob.set(wait: 3.minutes).perform_later(user: @user, recipe: @recipe)
@@ -43,14 +45,13 @@ class RecipesController < ApplicationController
            status: :unprocessable_entity
   end
 
-  # PATCH/PUT /recipes/1
+  # PATCH/PUT /recipes/1ar_internal_metadata
   def update
     raise unless @recipe.user == @user
 
     ActiveRecord::Base.transaction do
       unless params[:ingredients].nil?
-        # TODO: place which somebody must rewrite because delete then create is a bad practice for update
-        # @recipe.ingredients.update(params[:ingredients])
+        transformation(params[:ingredients]) if params[:ingredients].instance_of?(String)
         @recipe.ingredients.clear
         Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
       end
@@ -81,6 +82,12 @@ class RecipesController < ApplicationController
 
   private
 
+  # Type conversion for ingredients "[1,2]" => [1,2]
+  def transformation(ingredients)
+    temp = ingredients.delete '[]'
+    params[:ingredients] = temp.split(',').map(&:to_i)
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def set_recipe
     @recipe = Recipe.find(params[:id])
@@ -88,7 +95,12 @@ class RecipesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def recipe_params
-    params[:recipe].permit(:title, :description, :image)
+    {
+      title: params[:title],
+      description: params[:description],
+      image: params[:image],
+      user: @user
+    }
   end
 
   def search_recipes
