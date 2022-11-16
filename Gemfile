@@ -9,6 +9,7 @@ gem 'sidekiq', '~> 6.5.5'
 
 gem 'bcrypt'
 gem 'bootsnap', require: false
+gem 'cloudinary'
 gem 'faker'
 gem 'jbuilder'
 gem 'jwt'
