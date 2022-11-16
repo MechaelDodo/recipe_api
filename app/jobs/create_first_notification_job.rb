@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 class CreateFirstNotificationJob < ApplicationJob
   queue_as :default
-
 
   def perform(args)
     # Do something later
