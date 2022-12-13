@@ -29,6 +29,8 @@ Rails - 7.0.4
 
 Sidekiq - 6.5.5
 
+Redis - 5.0.7
+
 ## Running
 
 1. After installing the project itself run `bundle install`;
@@ -42,6 +44,8 @@ Sidekiq - 6.5.5
 3. To check that all is OK you can run `bundle exec rspec`;
 
 4. To start the application itself run `rails s` in your project console;
+
+5. For starting sidekiq you have to run `bundle exec sidekiq -q default` in your project console;
 
 ## Usage
 
