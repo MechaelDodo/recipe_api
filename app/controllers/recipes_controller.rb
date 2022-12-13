@@ -17,11 +17,9 @@ class RecipesController < ApplicationController
     ActiveRecord::Base.transaction do
       @recipe = Recipe.create(recipe_params)
       transformation(params[:ingredients]) if params[:ingredients].instance_of?(String)
-
       Ingredient.find(params[:ingredients]).each { |ingredient| @recipe.ingredients << ingredient }
-      if @user.first_recipe == false
-        CreateFirstNotificationJob.set(wait: 3.minutes).perform_later(user: @user, recipe: @recipe)
-        @user.update(first_recipe: true)
+      if @user.recipes.count == 1
+        CreateFirstNotificationJob.set(wait: 2.minutes).perform_later(user: @user, recipe: @recipe)
       end
       render json: @recipe, status: :created, location: @recipe
     end

@@ -10,15 +10,15 @@ development:
   <<: *default
   database: recipe_api_development
   host: localhost
-  username: postgres
-  password: MyPassword
+  username: root
+  password: root
 
 test:
   <<: *default
   database: recipe_api_test
   host: localhost
-  username: postgres
-  password: MyPassword
+  username: root
+  password: root
 
 production:
   <<: *default
